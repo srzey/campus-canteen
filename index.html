@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>食光里 · 校园食堂交流平台</title>
+<style>
+/* ============ 基础与变量 ============ */
+:root{
+  --orange:#FF6B35; --orange-d:#E8551F; --gold:#F7B733;
+  --cream:#FFF8F0; --card:#FFFFFF; --ink:#2D2A26; --sub:#8A8378;
+  --line:#F0E6DA; --soft:#FFF1E6;
+  --green:#2E9E5B; --red:#E5484D; --blue:#3B82F6; --purple:#8B5CF6;
+  --shadow:0 8px 30px rgba(210,120,50,.10);
+  --shadow-h:0 14px 40px rgba(210,120,50,.20);
+  --r:18px; --r-s:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{
+  font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",system-ui,sans-serif;
+  background:var(--cream); color:var(--ink); line-height:1.6;
+  min-height:100vh; overflow-x:hidden;
+}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,textarea,select{font-family:inherit;outline:none}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-thumb{background:#E9D9C8;border-radius:8px}
+::-webkit-scrollbar-track{transparent}
+
+/* ============ 通用组件 ============ */
+.page{display:none;min-height:100vh;animation:fade .4s ease}
+.page.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:12px 22px;border-radius:12px;font-weight:600;font-size:15px;
+  transition:.2s;white-space:nowrap;
+}
+.btn:active{transform:scale(.96)}
+.btn-primary{background:linear-gradient(135deg,var(--orange),var(--orange-d));color:#fff;box-shadow:0 6px 16px rgba(255,107,53,.35)}
+.btn-primary:hover{box-shadow:0 8px 24px rgba(255,107,53,.5);transform:translateY(-2px)}
+.btn-ghost{background:var(--soft);color:var(--orange-d)}
+.btn-ghost:hover{background:#FFE3CD}
+.btn-line{border:1.5px solid var(--line);background:#fff;color:var(--sub)}
+.btn-line:hover{border-color:var(--orange);color:var(--orange)}
+.btn-sm{padding:8px 14px;font-size:13px;border-radius:10px}
+.btn-danger{background:#FDECEC;color:var(--red)}
+.btn-ok{background:#E6F6EC;color:var(--green)}
+.tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600}
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);border:1px solid rgba(240,230,218,.7)}
+.sec-title{font-size:20px;font-weight:800;display:flex;align-items:center;gap:9px;margin-bottom:16px}
+.sec-title .bar{width:5px;height:22px;border-radius:3px;background:linear-gradient(var(--gold),var(--orange))}
+.muted{color:var(--sub);font-size:13px}
+.empty{text-align:center;padding:60px 20px;color:var(--sub)}
+.empty .ico{font-size:54px;display:block;margin-bottom:14px;opacity:.6}
+
+/* ============ 顶部导航 ============ */
+.topbar{
+  position:sticky;top:0;z-index:50;background:rgba(255,248,240,.92);
+  backdrop-filter:blur(14px);border-bottom:1px solid var(--line);
+}
+.topbar .wrap{display:flex;align-items:center;justify-content:space-between;height:66px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px}
+.brand .logo{
+  width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:22px;
+  background:linear-gradient(135deg,var(--orange),var(--gold));box-shadow:0 4px 12px rgba(255,107,53,.35);
+}
+.brand small{font-size:11px;color:var(--sub);font-weight:500;display:block;line-height:1}
+.top-right{display:flex;align-items:center;gap:10px}
+.user-chip{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);padding:6px 14px 6px 6px;border-radius:22px;font-size:13px;font-weight:600}
+.avatar{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--soft);font-size:15px}
+.icon-btn{width:38px;height:38px;border-radius:11px;background:#fff;border:1px solid var(--line);display:grid;place-items:center;font-size:17px;transition:.2s}
+.icon-btn:hover{background:var(--soft);border-color:var(--orange)}
+
+/* ============ 入口页 ============ */
+#page-entry{
+  background:
+    radial-gradient(1000px 500px at 12% 8%, #FFE7CF 0%, transparent 55%),
+    radial-gradient(900px 500px at 88% 92%, #FFEBC9 0%, transparent 55%),
+    var(--cream);
+  position:relative;overflow:hidden;
+}
+.entry-deco{position:absolute;font-size:130px;opacity:.07;pointer-events:none;filter:blur(1px)}
+.d1{top:6%;left:4%;transform:rotate(-18deg)}
+.d2{bottom:8%;right:5%;transform:rotate(15deg)}
+.d3{top:40%;left:48%;font-size:80px;opacity:.05}
+.entry-inner{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:50px 20px;position:relative;z-index:2}
+.entry-logo{
+  width:96px;height:96px;border-radius:28px;display:grid;place-items:center;font-size:52px;margin-bottom:22px;
+  background:linear-gradient(135deg,var(--orange),var(--gold));box-shadow:0 16px 40px rgba(255,107,53,.4);
+  animation:float 4s ease-in-out infinite;
+}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-12px) rotate(3deg)}}
+.entry-title{font-size:clamp(34px,6vw,56px);font-weight:900;letter-spacing:2px;line-height:1.2}
+.entry-title span{background:linear-gradient(135deg,var(--orange),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+.entry-sub{font-size:16px;color:var(--sub);margin:14px 0 8px}
+.entry-feats{display:flex;gap:22px;flex-wrap:wrap;justify-content:center;margin:18px 0 40px;font-size:13px;color:var(--sub)}
+.entry-feats span{display:flex;align-items:center;gap:6px}
+.role-cards{display:grid;grid-template-columns:repeat(2,minmax(240px,340px));gap:22px;width:100%;max-width:720px}
+.role-card{
+  background:#fff;border-radius:24px;padding:34px 26px;box-shadow:var(--shadow);border:2px solid transparent;
+  transition:.3s;text-align:left;position:relative;overflow:hidden;
+}
+.role-card:hover{transform:translateY(-8px);box-shadow:var(--shadow-h);border-color:var(--orange)}
+.role-card .glow{position:absolute;width:150px;height:150px;border-radius:50%;top:-60px;right:-50px;opacity:.13}
+.role-card.stu .glow{background:var(--blue)}
+.role-card.can .glow{background:var(--green)}
+.role-icon{width:64px;height:64px;border-radius:18px;display:grid;place-items:center;font-size:34px;margin-bottom:18px}
+.role-card.stu .role-icon{background:#EAF1FF}
+.role-card.can .role-icon{background:#E6F6EC}
+.role-card h3{font-size:23px;margin-bottom:6px}
+.role-card .role-en{font-size:11px;letter-spacing:2px;color:var(--sub);text-transform:uppercase;font-weight:700}
+.role-card p{color:var(--sub);font-size:13px;margin:14px 0 20px;line-height:1.7}
+.role-list{list-style:none;display:grid;gap:9px;margin-bottom:24px}
+.role-list li{font-size:13px;display:flex;align-items:center;gap:9px;color:#5b5349}
+.role-list .ck{width:20px;height:20px;border-radius:6px;display:grid;place-items:center;font-size:11px;color:#fff;flex:none}
+.role-card.stu .ck{background:var(--blue)}
+.role-card.can .ck{background:var(--green)}
+.role-card .go{font-weight:700;font-size:15px;display:flex;align-items:center;gap:8px}
+.role-card.stu .go{color:var(--blue)}
+.role-card.can .go{color:var(--green)}
+.entry-foot{margin-top:34px;font-size:12px;color:#B5AA9D}
+
+/* ============ 认证（登录 / 注册） ============ */
+.auth-card{width:100%;max-width:460px;margin:26px 0 0;padding:6px 30px 26px;text-align:left;box-shadow:var(--shadow-h)}
+.auth-tabs{display:flex;gap:8px;border-bottom:1px solid var(--line);margin-bottom:22px}
+.auth-tab{flex:1;padding:14px 0;font-size:16px;font-weight:800;color:var(--sub);border-bottom:3px solid transparent;margin-bottom:-1px;transition:.2s}
+.auth-tab:hover{color:var(--orange)}
+.auth-tab.on{color:var(--orange);border-color:var(--orange)}
+.auth-panel{display:none}
+.auth-panel.on{display:block;animation:fade .3s ease}
+.auth-submit{width:100%;padding:14px;font-size:16px;letter-spacing:6px;margin-top:4px}
+.auth-hint{margin-top:14px;padding:11px 13px;background:var(--soft);border-radius:10px;font-size:12px;color:#8a6a53;line-height:1.7}
+.auth-hint b{color:var(--orange-d)}
+.demo-box{margin-top:12px;padding:12px 14px;border:1px dashed #E3CDB5;border-radius:11px;font-size:12px;color:var(--sub);line-height:1.9}
+.demo-box b{color:var(--ink)}
+.demo-box .btn{margin:7px 8px 0 0}
+.quick-entry{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 16px;margin-top:18px;font-size:13px;box-shadow:var(--shadow);flex-wrap:wrap;justify-content:center}
+.quick-entry b{color:var(--orange-d)}
+.role-pick{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+.role-opt{padding:14px 10px;border:2px solid var(--line);border-radius:14px;text-align:center;cursor:pointer;transition:.2s;background:#fff}
+.role-opt:hover{border-color:var(--orange)}
+.role-opt.on{border-color:var(--orange);background:var(--soft)}
+.role-opt .ro-ico{font-size:27px;display:block;margin-bottom:4px}
+.role-opt b{display:block;font-size:15px}
+.role-opt small{font-size:10px;color:var(--sub);display:block;margin-top:3px;line-height:1.4}
+
+/* ============ 主体布局 ============ */
+.app-body{padding:22px 0 60px}
+.tabs{display:flex;gap:8px;background:#fff;padding:7px;border-radius:16px;box-shadow:var(--shadow);margin-bottom:24px;overflow-x:auto}
+.tab{
+  flex:1;min-width:104px;padding:12px 16px;border-radius:12px;font-weight:700;font-size:14px;color:var(--sub);
+  display:flex;align-items:center;justify-content:center;gap:7px;transition:.2s;white-space:nowrap;
+}
+.tab:hover{background:var(--soft);color:var(--orange)}
+.tab.on{background:linear-gradient(135deg,var(--orange),var(--orange-d));color:#fff;box-shadow:0 5px 14px rgba(255,107,53,.3)}
+.tab .badge{background:rgba(255,255,255,.25);padding:1px 7px;border-radius:10px;font-size:11px}
+.tab:not(.on) .badge{background:var(--soft);color:var(--orange)}
+.tab-panel{display:none}
+.tab-panel.on{display:block;animation:fade .35s ease}
+
+/* ============ 点餐页 ============ */
+.order-layout{display:grid;grid-template-columns:1fr 340px;gap:22px;align-items:start}
+.win-strip{display:flex;gap:12px;overflow-x:auto;padding:4px 2px 14px;margin-bottom:6px}
+.win-chip{
+  flex:none;min-width:118px;padding:14px 12px;border-radius:16px;background:#fff;border:2px solid transparent;
+  box-shadow:var(--shadow);text-align:center;transition:.2s;position:relative;
+}
+.win-chip:hover{transform:translateY(-3px)}
+.win-chip.on{border-color:var(--orange);background:var(--soft)}
+.win-chip .we{font-size:30px;display:block;margin-bottom:6px}
+.win-chip .wn{font-size:13px;font-weight:700;white-space:nowrap}
+.win-chip .wc{font-size:11px;color:var(--sub);margin-top:2px}
+.win-head{display:flex;align-items:center;justify-content:space-between;margin:14px 0 16px}
+.win-head h2{font-size:22px;display:flex;align-items:center;gap:10px}
+.dish-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.dish-card{background:#fff;border-radius:16px;box-shadow:var(--shadow);overflow:hidden;transition:.25s;border:1px solid rgba(240,230,218,.7)}
+.dish-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-h)}
+.dish-pic{height:118px;display:grid;place-items:center;font-size:56px;position:relative}
+.dish-pic .stock{position:absolute;top:10px;right:10px;background:rgba(255,255,255,.9);padding:2px 9px;border-radius:10px;font-size:11px;font-weight:600;color:var(--sub)}
+.dish-info{padding:13px 15px 15px}
+.dish-info h4{font-size:15px;margin-bottom:3px}
+.dish-info .desc{font-size:11px;color:var(--sub);height:30px;overflow:hidden;line-height:1.4}
+.dish-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:9px}
+.price{color:var(--orange);font-weight:800;font-size:18px}
+.price small{font-size:12px}
+.add-btn{width:32px;height:32px;border-radius:10px;background:var(--orange);color:#fff;font-size:20px;display:grid;place-items:center;line-height:1;transition:.2s;box-shadow:0 4px 10px rgba(255,107,53,.3)}
+.add-btn:hover{background:var(--orange-d);transform:scale(1.08)}
+.add-btn:disabled{background:#DDD5CC;box-shadow:none;cursor:not-allowed;transform:none}
+
+/* 购物车 */
+.cart{position:sticky;top:88px}
+.cart-box{padding:20px}
+.cart-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.cart-title h3{font-size:17px;display:flex;align-items:center;gap:8px}
+.cart-items{max-height:280px;overflow-y:auto;margin:-4px 0 12px}
+.cart-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px dashed var(--line)}
+.cart-item .ci-emoji{width:36px;height:36px;border-radius:10px;background:var(--soft);display:grid;place-items:center;font-size:19px;flex:none}
+.cart-item .ci-main{flex:1;min-width:0}
+.cart-item .ci-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cart-item .ci-price{font-size:11px;color:var(--sub)}
+.qty-ctrl{display:flex;align-items:center;gap:6px}
+.qty-ctrl button{width:24px;height:24px;border-radius:7px;background:var(--soft);color:var(--orange);font-weight:800;display:grid;place-items:center}
+.qty-ctrl button:hover{background:#FFE0C7}
+.qty-ctrl span{min-width:16px;text-align:center;font-size:13px;font-weight:700}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;font-weight:700;color:var(--sub);margin-bottom:7px}
+.field input,.field select,.field textarea{
+  width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:11px;font-size:14px;background:#fff;color:var(--ink);transition:.2s
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(255,107,53,.1)}
+.field textarea{resize:vertical;min-height:64px}
+.cart-total{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-top:1px solid var(--line);margin-top:6px}
+.cart-total .t-label{font-size:13px;color:var(--sub)}
+.cart-total .t-num{font-size:24px;font-weight:800;color:var(--orange)}
+.submit-order{width:100%;padding:14px;font-size:16px;margin-top:4px}
+.cart-empty{text-align:center;color:var(--sub);padding:34px 10px;font-size:13px}
+.cart-empty .ico{font-size:44px;display:block;opacity:.5;margin-bottom:8px}
+
+/* ============ 订单卡片（学生 & 食堂通用） ============ */
+.order-list{display:grid;gap:14px}
+.order-card{padding:18px 20px;transition:.2s}
+.order-card:hover{box-shadow:var(--shadow-h)}
+.order-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
+.order-id{font-size:12px;color:var(--sub)}
+.order-id b{color:var(--ink);font-size:13px}
+.status{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap}
+.st-pending{background:#FFF2D9;color:#B7791F}
+.st-preparing{background:#E8F0FF;color:#2B6CB0}
+.st-delivering{background:#EDE8FF;color:#6B46C1}
+.st-completed{background:#E6F6EC;color:var(--green)}
+.st-cancelled{background:#F0F0F0;color:#999}
+.order-items{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px}
+.order-items .oi{background:var(--soft);padding:5px 11px;border-radius:9px;font-size:12px}
+.order-items .oi b{color:var(--orange)}
+.order-meta{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:12px;color:var(--sub);padding-top:12px;border-top:1px dashed var(--line)}
+.order-meta span b{color:var(--ink)}
+.order-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:12px;flex-wrap:wrap}
+.filter-bar{display:flex;gap:7px;flex-wrap:wrap}
+.filter-chip{padding:7px 14px;border-radius:10px;background:#fff;border:1px solid var(--line);font-size:12px;font-weight:600;color:var(--sub);transition:.2s}
+.filter-chip:hover{border-color:var(--orange)}
+.filter-chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+/* ============ 留言 & 交流墙 ============ */
+.msg-layout{display:grid;grid-template-columns:220px 1fr;gap:20px;align-items:start}
+.side-win{display:grid;gap:9px}
+.side-win-item{padding:13px 14px;border-radius:13px;background:#fff;box-shadow:var(--shadow);display:flex;align-items:center;gap:11px;transition:.2s;border:2px solid transparent;font-weight:600;font-size:13px}
+.side-win-item:hover{transform:translateX(3px)}
+.side-win-item.on{border-color:var(--orange);background:var(--soft)}
+.side-win-item .sw-emoji{font-size:24px}
+.msg-box{padding:22px}
+.msg-box-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.msg-box-head h2{font-size:18px;display:flex;align-items:center;gap:9px}
+.msg-list{display:grid;gap:14px;margin-bottom:20px;max-height:440px;overflow-y:auto;padding-right:4px}
+.msg-item{display:flex;gap:12px;padding:14px;border-radius:14px;background:var(--cream)}
+.msg-avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-size:18px;background:linear-gradient(135deg,var(--gold),var(--orange));flex:none;color:#fff;font-weight:700}
+.msg-content{flex:1;min-width:0}
+.msg-content .mh{display:flex;align-items:center;gap:9px;margin-bottom:4px}
+.msg-content .mh b{font-size:13px}
+.msg-content .mh time{font-size:11px;color:var(--sub)}
+.msg-content .mt{font-size:13px;color:#4a443d;word-break:break-word}
+.msg-reply{margin-top:10px;padding:10px 12px;background:#EAF1FF;border-radius:10px;font-size:12px;border-left:3px solid var(--blue)}
+.msg-reply b{color:var(--blue)}
+.compose{display:flex;gap:10px;align-items:flex-end}
+.compose textarea{flex:1}
+
+/* 交流墙 */
+.wall-compose{padding:18px 20px;margin-bottom:20px}
+.wall-compose .wc-row{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+.wall-compose input{flex:1;padding:12px 14px;border:1.5px solid var(--line);border-radius:11px;font-size:14px}
+.wall-compose textarea{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:11px;font-size:14px;resize:vertical;min-height:70px;margin-bottom:12px}
+.tag-picker{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+.tag-opt{padding:5px 12px;border-radius:9px;background:var(--soft);font-size:12px;color:var(--sub);font-weight:600;transition:.2s}
+.tag-opt.on{background:var(--orange);color:#fff}
+.wall-list{display:grid;gap:16px}
+.post-card{padding:20px}
+.post-head{display:flex;align-items:center;gap:11px;margin-bottom:12px}
+.post-avatar{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-size:19px;background:linear-gradient(135deg,#FFB088,#FF6B35);color:#fff;font-weight:700}
+.post-head .ph-main{flex:1}
+.post-head .ph-main b{font-size:14px;display:block}
+.post-head .ph-main time{font-size:11px;color:var(--sub)}
+.post-title{font-size:17px;font-weight:800;margin-bottom:8px}
+.post-text{font-size:14px;color:#4a443d;line-height:1.7;white-space:pre-wrap;word-break:break-word}
+.post-foot{display:flex;align-items:center;gap:18px;margin-top:15px;padding-top:13px;border-top:1px solid var(--line)}
+.act{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--sub);transition:.2s;font-weight:600}
+.act:hover{color:var(--orange)}
+.act.liked{color:var(--red)}
+.comments{margin-top:14px;padding-top:12px;border-top:1px dashed var(--line);display:none}
+.comments.show{display:block}
+.comment{display:flex;gap:9px;margin-bottom:10px;font-size:12px}
+.comment .cav{width:26px;height:26px;border-radius:50%;background:var(--soft);display:grid;place-items:center;font-size:13px;flex:none}
+.comment .cb b{color:var(--orange)}
+.comment .cb time{color:var(--sub);margin-left:6px;font-size:10px}
+.comment-input{display:flex;gap:8px;margin-top:10px}
+.comment-input input{flex:1;padding:9px 12px;border:1.5px solid var(--line);border-radius:10px;font-size:12px}
+
+/* ============ 食堂端菜品管理 ============ */
+.dish-manage-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.dm-card{padding:16px;display:flex;gap:13px;align-items:center}
+.dm-pic{width:58px;height:58px;border-radius:14px;display:grid;place-items:center;font-size:30px;flex:none}
+.dm-main{flex:1;min-width:0}
+.dm-main h4{font-size:15px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dm-main .dm-price{color:var(--orange);font-weight:800;font-size:15px}
+.dm-main .dm-stock{font-size:11px;color:var(--sub)}
+.dm-actions{display:flex;flex-direction:column;gap:5px}
+.dm-actions button{padding:5px 9px;font-size:11px;border-radius:8px}
+
+/* ============ 统计条 ============ */
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.stat{padding:18px 20px;display:flex;align-items:center;gap:14px}
+.stat .si{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;font-size:23px;flex:none}
+.stat .sv{font-size:26px;font-weight:800;line-height:1}
+.stat .sl{font-size:12px;color:var(--sub);margin-top:3px}
+
+/* ============ 弹窗 & Toast ============ */
+.modal-mask{position:fixed;inset:0;background:rgba(30,22,16,.5);backdrop-filter:blur(4px);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-mask.show{display:flex;animation:fade .2s ease}
+.modal{background:#fff;border-radius:22px;width:100%;max-width:480px;box-shadow:0 24px 70px rgba(0,0,0,.25);overflow:hidden;animation:pop .3s cubic-bezier(.2,1.3,.4,1)}
+@keyframes pop{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+.modal-head{padding:20px 24px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+.modal-head h3{font-size:18px}
+.modal-close{width:32px;height:32px;border-radius:9px;background:var(--soft);color:var(--sub);font-size:18px;display:grid;place-items:center}
+.modal-close:hover{background:#FFE0C7;color:var(--orange)}
+.modal-body{padding:22px 24px;max-height:65vh;overflow-y:auto}
+.modal-foot{padding:16px 24px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:10px}
+#toast{position:fixed;top:82px;left:50%;transform:translateX(-50%) translateY(-20px);z-index:300;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none;opacity:0;transition:.3s}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast-item{background:var(--ink);color:#fff;padding:11px 20px;border-radius:12px;font-size:13px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.2);display:flex;align-items:center;gap:8px}
+
+/* ============ 响应式 ============ */
+@media(max-width:900px){
+  .order-layout{grid-template-columns:1fr}
+  .cart{position:static}
+  .stat-row{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:620px){
+  .role-cards{grid-template-columns:1fr}
+  .msg-layout{grid-template-columns:1fr}
+  .side-win{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}
+  .stat-row{grid-template-columns:repeat(2,1fr)}
+  .tab{min-width:88px;padding:10px;font-size:12px;flex-direction:column;gap:2px}
+  .topbar .wrap{height:58px}
+  .brand{font-size:17px}
+  .entry-feats{gap:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== 入口页 ==================== -->
+<div class="page active" id="page-entry">
+  <span class="entry-deco d1">🍜</span>
+  <span class="entry-deco d2">🍱</span>
+  <span class="entry-deco d3">🥟</span>
+  <div class="entry-inner wrap">
+    <div class="entry-logo">🍚</div>
+    <h1 class="entry-title">食光里 <span>校园食堂交流平台</span></h1>
+    <p class="entry-sub">connecting 每一份热气腾腾的校园味道 🍲</p>
+
+    <div class="quick-entry" id="quickEntry" style="display:none">
+      👋 当前已登录：<b id="quickUser"></b>
+      <button class="btn btn-ghost btn-sm" onclick="quickEnter()">快速进入</button>
+      <button class="btn btn-line btn-sm" onclick="logout()">退出登录</button>
+    </div>
+
+    <div class="card auth-card">
+      <div class="auth-tabs">
+        <button class="auth-tab on" id="tab-login" onclick="switchAuth('login')">🔑 登 录</button>
+        <button class="auth-tab" id="tab-register" onclick="switchAuth('register')">✍️ 注 册</button>
+      </div>
+
+      <!-- 登录 -->
+      <div class="auth-panel on" id="auth-login">
+        <div class="field"><label>👤 账号</label><input id="loginAccount" placeholder="请输入账号" maxlength="20" autocomplete="username"></div>
+        <div class="field"><label>🔒 密码</label><input id="loginPwd" type="password" placeholder="请输入密码" maxlength="30" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+        <button class="btn btn-primary auth-submit" onclick="doLogin()">登 录</button>
+        <div class="auth-hint">🤖 系统根据<b>账号首字母</b>自动分配端口（不区分大小写）：<br>以 <b>S 或 s</b> 开头 → 进入<b>食堂端</b>；其他字母/数字 → 进入<b>学生端</b></div>
+        <div class="demo-box">
+          🎓 学生演示账号：<b>xiaoming</b> / 123456<br>
+          🏪 食堂演示账号：<b>S001</b> / 123456
+          <div><button class="btn btn-line btn-sm" onclick="fillDemo('student')">填入学生账号</button><button class="btn btn-line btn-sm" onclick="fillDemo('canteen')">填入食堂账号</button></div>
+        </div>
+      </div>
+
+      <!-- 注册 -->
+      <div class="auth-panel" id="auth-register">
+        <div class="role-pick">
+          <div class="role-opt on" id="regRole-student" onclick="pickRegRole('student')"><span class="ro-ico">🎒</span><b>我是学生</b><small>账号首字母<br>不可为 S / s</small></div>
+          <div class="role-opt" id="regRole-canteen" onclick="pickRegRole('canteen')"><span class="ro-ico">👨‍🍳</span><b>我是食堂</b><small>账号首字母<br>必须为 S / s</small></div>
+        </div>
+        <div class="field"><label>👤 账号</label><input id="regAccount" placeholder="如：xiaoming" maxlength="20" autocomplete="username" oninput="syncRegRoleByAccount()"></div>
+        <div class="field"><label>🔒 密码（至少 6 位）</label><input id="regPwd" type="password" placeholder="请设置密码" maxlength="30" autocomplete="new-password"></div>
+        <div class="field"><label>🔒 确认密码</label><input id="regPwd2" type="password" placeholder="请再次输入密码" maxlength="30" autocomplete="new-password" onkeydown="if(event.key==='Enter')doRegister()"></div>
+        <button class="btn btn-primary auth-submit" onclick="doRegister()">注 册</button>
+        <div class="auth-hint" id="regRuleHint"></div>
+      </div>
+    </div>
+
+    <div class="entry-foot">🔒 纯本地运行 · 数据保存在你的浏览器中 · 无需联网</div>
+  </div>
+</div>
+
+<!-- ==================== 学生端 ==================== -->
+<div class="page" id="page-student">
+  <div class="topbar">
+    <div class="wrap">
+      <div class="brand"><div class="logo">🍚</div><div>食光里<small>学生端 · Student</small></div></div>
+      <div class="top-right">
+        <div class="user-chip"><span class="avatar">🎒</span><span id="stuNameShow">同学</span></div>
+        <button class="icon-btn" onclick="goHome()" title="返回首页">🏠</button>
+        <button class="icon-btn" onclick="logout()" title="退出登录">🚪</button>
+      </div>
+    </div>
+  </div>
+  <div class="app-body wrap">
+    <div class="tabs">
+      <button class="tab on" data-tab="stu-order" onclick="switchTab('student','stu-order')">🍽️ 在线点餐</button>
+      <button class="tab" data-tab="stu-myorder" onclick="switchTab('student','stu-myorder')">📋 我的订单 <span class="badge" id="myOrderBadge">0</span></button>
+      <button class="tab" data-tab="stu-msg" onclick="switchTab('student','stu-msg')">💬 窗口留言</button>
+      <button class="tab" data-tab="stu-wall" onclick="switchTab('student','stu-wall')">📌 交流墙</button>
+    </div>
+
+    <!-- 点餐 -->
+    <div class="tab-panel on" id="stu-order">
+      <div class="order-layout">
+        <div>
+          <div class="win-strip" id="winStrip"></div>
+          <div class="win-head">
+            <h2 id="curWinName">🍜 全部美味</h2>
+            <span class="muted" id="dishCount"></span>
+          </div>
+          <div class="dish-grid" id="dishGrid"></div>
+        </div>
+        <div class="cart">
+          <div class="card cart-box">
+            <div class="cart-title"><h3>🛒 我的餐盘</h3><span class="muted" id="cartCount">0 件</span></div>
+            <div id="cartItems"><div class="cart-empty"><span class="ico">🍽️</span>餐盘空空的，去挑选美味吧</div></div>
+            <div class="field" style="margin-top:16px">
+              <label>👤 你的称呼</label>
+              <input id="orderName" placeholder="如：小明 / 3号宿舍楼" maxlength="16">
+            </div>
+            <div class="field">
+              <label>📍 送达地址</label>
+              <select id="orderAddr">
+                <option value="1号宿舍楼">🏠 1号宿舍楼</option>
+                <option value="2号宿舍楼">🏠 2号宿舍楼</option>
+                <option value="3号宿舍楼">🏠 3号宿舍楼</option>
+                <option value="4号宿舍楼">🏠 4号宿舍楼</option>
+                <option value="研究生公寓">🏠 研究生公寓</option>
+                <option value="第一教学楼">🏫 第一教学楼</option>
+                <option value="图书馆">📚 图书馆</option>
+                <option value="体育馆">🏀 体育馆</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>⏰ 送达时间</label>
+              <select id="orderTime">
+                <option value="尽快送达（约20分钟）">尽快送达（约20分钟）</option>
+                <option value="11:30 - 12:00">11:30 - 12:00</option>
+                <option value="12:00 - 12:30">12:00 - 12:30</option>
+                <option value="12:30 - 13:00">12:30 - 13:00</option>
+                <option value="17:30 - 18:00">17:30 - 18:00</option>
+                <option value="18:00 - 18:30">18:00 - 18:30</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>📝 备注（可选）</label>
+              <input id="orderNote" placeholder="如：不要香菜、多加辣" maxlength="40">
+            </div>
+            <div class="cart-total"><span class="t-label">合计</span><span class="t-num" id="cartTotal">¥0</span></div>
+            <button class="btn btn-primary submit-order" onclick="submitOrder()">提交订单</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 我的订单 -->
+    <div class="tab-panel" id="stu-myorder">
+      <div class="toolbar">
+        <div class="sec-title"><span class="bar"></span>我的订单</div>
+        <div class="filter-bar" id="myOrderFilter"></div>
+      </div>
+      <div class="order-list" id="myOrderList"></div>
+    </div>
+
+    <!-- 窗口留言 -->
+    <div class="tab-panel" id="stu-msg">
+      <div class="msg-layout">
+        <div>
+          <div class="sec-title" style="font-size:16px"><span class="bar"></span>选择窗口</div>
+          <div class="side-win" id="msgWinList"></div>
+        </div>
+        <div class="card msg-box">
+          <div class="msg-box-head"><h2 id="msgWinTitle">💬 窗口留言板</h2><span class="muted" id="msgCount">0 条留言</span></div>
+          <div class="msg-list" id="msgList"></div>
+          <div class="compose">
+            <textarea id="msgInput" placeholder="想对这个窗口说点什么？表扬、建议、许愿都可以～" maxlength="200"></textarea>
+            <button class="btn btn-primary" onclick="postMsg()">发送</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 交流墙 -->
+    <div class="tab-panel" id="stu-wall">
+      <div class="card wall-compose">
+        <div class="wc-row"><span style="font-size:22px">✍️</span><input id="postTitle" placeholder="发个帖子，标题醒目一点～" maxlength="40"></div>
+        <textarea id="postContent" placeholder="分享你今天食堂吃到什么好吃的，或者吐槽、求推荐、找饭搭子……" maxlength="500"></textarea>
+        <div class="tag-picker" id="tagPicker"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span class="muted">选择话题标签，让更多同学看到</span>
+          <button class="btn btn-primary" onclick="postThread()">发布帖子</button>
+        </div>
+      </div>
+      <div class="toolbar"><div class="sec-title"><span class="bar"></span>校园交流墙</div><div class="filter-bar" id="wallFilter"></div></div>
+      <div class="wall-list" id="wallList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 食堂端 ==================== -->
+<div class="page" id="page-canteen">
+  <div class="topbar">
+    <div class="wrap">
+      <div class="brand"><div class="logo">👨‍🍳</div><div>食光里<small>食堂端 · Canteen</small></div></div>
+      <div class="top-right">
+        <div class="user-chip"><span class="avatar">🏪</span><span id="canNameShow">食堂工作台</span></div>
+        <button class="icon-btn" onclick="goHome()" title="返回首页">🏠</button>
+        <button class="icon-btn" onclick="logout()" title="退出登录">🚪</button>
+      </div>
+    </div>
+  </div>
+  <div class="app-body wrap">
+    <div class="tabs">
+      <button class="tab on" data-tab="can-order" onclick="switchTab('canteen','can-order')">📦 订单管理 <span class="badge" id="canOrderBadge">0</span></button>
+      <button class="tab" data-tab="can-msg" onclick="switchTab('canteen','can-msg')">💬 留言管理</button>
+      <button class="tab" data-tab="can-dish" onclick="switchTab('canteen','can-dish')">🍳 菜品管理</button>
+    </div>
+
+    <!-- 订单管理 -->
+    <div class="tab-panel on" id="can-order">
+      <div class="stat-row" id="statRow"></div>
+      <div class="toolbar">
+        <div class="sec-title"><span class="bar"></span>学生订单</div>
+        <div class="filter-bar" id="canOrderFilter"></div>
+      </div>
+      <div class="order-list" id="canOrderList"></div>
+    </div>
+
+    <!-- 留言管理 -->
+    <div class="tab-panel" id="can-msg">
+      <div class="msg-layout">
+        <div>
+          <div class="sec-title" style="font-size:16px"><span class="bar"></span>本店窗口</div>
+          <div class="side-win" id="canMsgWinList"></div>
+        </div>
+        <div class="card msg-box">
+          <div class="msg-box-head"><h2 id="canMsgTitle">💬 留言管理</h2><span class="muted" id="canMsgCount">0 条留言</span></div>
+          <div class="msg-list" id="canMsgList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 菜品管理 -->
+    <div class="tab-panel" id="can-dish">
+      <div class="win-strip" id="dishManageStrip"></div>
+      <div class="toolbar" style="margin-top:10px">
+        <div class="sec-title"><span class="bar"></span><span id="dishManageTitle">菜品管理</span></div>
+        <button class="btn btn-primary btn-sm" onclick="openDishModal()">＋ 新增菜品</button>
+      </div>
+      <div class="dish-manage-grid" id="dishManageGrid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 弹窗 ==================== -->
+<div class="modal-mask" id="modalMask" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-head"><h3 id="modalTitle">标题</h3><button class="modal-close" onclick="closeModal()">×</button></div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-foot" id="modalFoot"></div>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+/* ==================== 数据层（localStorage） ==================== */
+const KEY='shiguangli_db_v1';
+let DB;
+
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function nowStr(){const d=new Date();return `${d.getMonth()+1}月${d.getDate()}日 ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`}
+
+function seed(){
+  const wins=[
+    {id:'w1',name:'川湘风味',emoji:'🌶️',color:'#FFE0D6',desc:'香辣过瘾，下饭首选'},
+    {id:'w2',name:'粤式烧腊',emoji:'🍗',color:'#FFEBC9',desc:'地道广味，油润鲜香'},
+    {id:'w3',name:'面食工坊',emoji:'🍜',color:'#DBEAFE',desc:'现煮现捞，筋道弹牙'},
+    {id:'w4',name:'轻食沙拉',emoji:'🥗',color:'#DDF5E4',desc:'低卡健康，清爽一夏'},
+    {id:'w5',name:'甜品饮品',emoji:'🧋',color:'#FCE4F0',desc:'饭后来点甜的'},
+  ];
+  const dishes=[
+    {id:'d1',win:'w1',name:'鱼香肉丝盖饭',price:14,emoji:'🍛',desc:'经典川味，酸甜微辣超下饭',stock:99},
+    {id:'d2',win:'w1',name:'麻婆豆腐',price:10,emoji:'🌶️',desc:'麻辣鲜香，嫩滑入味',stock:99},
+    {id:'d3',win:'w1',name:'辣子鸡丁',price:16,emoji:'🍗',desc:'外酥里嫩，越吃越香',stock:20},
+    {id:'d4',win:'w2',name:'叉烧饭',price:16,emoji:'🍱',desc:'蜜汁叉烧，油亮诱人',stock:99},
+    {id:'d5',win:'w2',name:'白切鸡',price:14,emoji:'🐔',desc:'皮爽肉滑，原汁原味',stock:30},
+    {id:'d6',win:'w2',name:'烧鹅腿饭',price:19,emoji:'🍖',desc:'脆皮多汁，限定美味',stock:12},
+    {id:'d7',win:'w3',name:'兰州牛肉面',price:12,emoji:'🍜',desc:'一清二白三红四绿',stock:99},
+    {id:'d8',win:'w3',name:'番茄鸡蛋面',price:10,emoji:'🍝',desc:'酸甜开胃，家常味道',stock:99},
+    {id:'d9',win:'w3',name:'猪肉白菜水饺',price:13,emoji:'🥟',desc:'手工现包，皮薄馅大',stock:40},
+    {id:'d10',win:'w4',name:'鸡胸肉沙拉',price:15,emoji:'🥗',desc:'高蛋白低脂，健身必备',stock:99},
+    {id:'d11',win:'w4',name:'牛油果藜麦碗',price:18,emoji:'🥑',desc:'营养均衡，超有饱腹感',stock:25},
+    {id:'d12',win:'w5',name:'珍珠奶茶',price:8,emoji:'🧋',desc:'Q弹珍珠，奶香浓郁',stock:99},
+    {id:'d13',win:'w5',name:'杨枝甘露',price:12,emoji:'🥭',desc:'芒果西柚，夏日限定',stock:30},
+  ];
+  const msgs=[
+    {id:'m1',win:'w1',author:'爱吃辣的小李',content:'鱼香肉丝真的绝！每次都光盘，师傅手艺在线👍',time:'昨天 12:15',reply:'谢谢同学的支持！明天继续加油～'},
+    {id:'m2',win:'w1',author:'阿强',content:'希望能出个微辣版本，太辣了有点承受不住哈哈',time:'今天 08:30',reply:''},
+    {id:'m3',win:'w3',author:'面面俱到',content:'牛肉面的汤头太香了，早上来一碗整个人都精神了！',time:'今天 09:10',reply:'早起的同学有福啦，汤底每天现熬！'},
+    {id:'m4',win:'w5',author:'甜妹',content:'杨枝甘露什么时候能常驻啊，一周只想喝三天😭',time:'今天 10:02',reply:''},
+  ];
+  const posts=[
+    {id:'p1',author:'干饭人小张',title:'食堂新出的窗口，你们试过了吗？',content:'三楼新开的轻食窗口，鸡胸肉沙拉只要15块，分量足还好吃！健身党狂喜，强烈推荐给姐妹们～',tag:'🍽️ 美食推荐',time:'今天 11:20',likes:28,comments:[{author:'小明',content:'明天就去试试！',time:'11:35'},{author:'吃货本体',content:'我已经连续吃三天了哈哈哈',time:'12:01'}]},
+    {id:'p2',author:'早八困成狗',title:'求一个能早起帮我带饭的饭搭子',content:'每天早八起不来，食堂高峰期又挤。有没有同学愿意顺路帮忙带个早饭，我请喝奶茶表示感谢！🙏',tag:'🤝 找饭搭子',time:'今天 09:45',likes:15,comments:[{author:'热心市民',content:'我在1号楼，可以顺路！',time:'10:12'}]},
+    {id:'p3',author:'匿名同学',title:'吐槽一下中午的排队问题',content:'12点整下课去二楼，队伍排到门口了😅 建议错峰或者多开几个窗口，不然真的来不及下午上课。',tag:'💬 食堂吐槽',time:'昨天 12:40',likes:42,comments:[]},
+  ];
+  return{windows:wins,dishes:dishes,orders:[],messages:msgs,posts:posts,cart:{},users:demoUsers()};
+}
+function demoUsers(){
+  return [
+    {account:'xiaoming',pwd:'123456',role:'student',nickname:'小明'},
+    {account:'S001',pwd:'123456',role:'canteen',nickname:'第一食堂'}
+  ];
+}
+function load(){
+  try{
+    const raw=localStorage.getItem(KEY);
+    if(raw){
+      DB=JSON.parse(raw);
+      if(!DB.users){DB.users=demoUsers();save()}
+      // 迁移旧演示账号：student001 以 s 开头与新规则冲突，统一改为 xiaoming
+      const oldDemo=DB.users.find(u=>u.account==='student001');
+      if(oldDemo){
+        if(!DB.users.some(u=>u.account==='xiaoming')){oldDemo.account='xiaoming';oldDemo.nickname='小明'}
+        else{DB.users=DB.users.filter(u=>u!==oldDemo)}
+        if(localStorage.getItem('sgli_user')==='student001')localStorage.setItem('sgli_user','xiaoming');
+        DB.orders.forEach(o=>{if(o.account==='student001')o.account='xiaoming'});
+        save();
+      }
+      return;
+    }
+  }catch(e){}
+  DB=seed();save();
+}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){toast('⚠️ 存储空间不足','❗')}}
+
+/* ==================== 通用 UI ==================== */
+let toastTimer;
+function toast(msg,ico='✅'){
+  const box=document.getElementById('toast');
+  box.innerHTML=`<div class="toast-item">${ico} ${msg}</div>`;
+  box.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>box.classList.remove('show'),2200);
+}
+function enterApp(role){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(role==='student'?'page-student':'page-canteen').classList.add('active');
+  if(role==='student'){renderStudent();const n=localStorage.getItem('sgli_name');if(n)document.getElementById('orderName').value=n;}
+  else renderCanteen();
+  window.scrollTo(0,0);
+}
+function goHome(){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-entry').classList.add('active');
+  refreshQuickEntry();
+  window.scrollTo(0,0);
+}
+function switchTab(page,tabId){
+  const root=document.getElementById('page-'+page);
+  root.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.tab===tabId));
+  root.querySelectorAll('.tab-panel').forEach(p=>p.classList.toggle('on',p.id===tabId));
+  if(tabId==='stu-myorder')renderMyOrders();
+  if(tabId==='stu-wall')renderWall();
+  if(tabId==='can-order')renderCanteen();
+  if(tabId==='can-msg')renderCanMsgs();
+  if(tabId==='can-dish')renderDishManage();
+}
+function openModal(title,body,foot){
+  document.getElementById('modalTitle').textContent=title;
+  document.getElementById('modalBody').innerHTML=body;
+  document.getElementById('modalFoot').innerHTML=foot||'';
+  document.getElementById('modalMask').classList.add('show');
+}
+function closeModal(){document.getElementById('modalMask').classList.remove('show')}
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* ==================== 认证：注册 / 登录 / 身份自动判定 ==================== */
+let regRole='student';
+let curUser=null;
+
+// 身份唯一判定规则：账号首字母 S 或 s（大小写均可）→ 食堂，其余 → 学生
+function roleOfAccount(acc){return String(acc||'').charAt(0).toLowerCase()==='s'?'canteen':'student'}
+function roleName(r){return r==='canteen'?'食堂':'学生'}
+
+function switchAuth(mode){
+  ['login','register'].forEach(m=>{
+    document.getElementById('tab-'+m).classList.toggle('on',m===mode);
+    document.getElementById('auth-'+m).classList.toggle('on',m===mode);
+  });
+}
+function fillDemo(role){
+  document.getElementById('loginAccount').value=role==='canteen'?'S001':'xiaoming';
+  document.getElementById('loginPwd').value='123456';
+}
+function pickRegRole(r){
+  regRole=r;
+  document.getElementById('regRole-student').classList.toggle('on',r==='student');
+  document.getElementById('regRole-canteen').classList.toggle('on',r==='canteen');
+  updateRegHint();
+  syncRegRoleByAccount();  // 账号已填时，首字母优先纠正身份
+}
+// 账号首字母是身份唯一依据：输入时实时纠正身份选项（大小写 s 均归食堂）
+function syncRegRoleByAccount(){
+  const acc=document.getElementById('regAccount').value.trim();
+  if(!acc)return;
+  const r=roleOfAccount(acc);
+  if(r!==regRole){
+    regRole=r;
+    document.getElementById('regRole-student').classList.toggle('on',r==='student');
+    document.getElementById('regRole-canteen').classList.toggle('on',r==='canteen');
+  }
+  updateRegHint();
+}
+function updateRegHint(){
+  const isCan=regRole==='canteen';
+  document.getElementById('regRuleHint').innerHTML=isCan
+    ? '🏪 当前身份<b>食堂</b>：账号首字母必须是 <b>S 或 s</b>（大小写均可）。'
+    : '🎓 当前身份<b>学生</b>：账号首字母不可为 S 或 s。';
+  document.getElementById('regAccount').placeholder=isCan?'如：S001 或 s001（S/s 开头均可）':'如：xiaoming（不能 S/s 开头）';
+}
+function doRegister(){
+  const acc=document.getElementById('regAccount').value.trim();
+  const pwd=document.getElementById('regPwd').value;
+  const pwd2=document.getElementById('regPwd2').value;
+  if(acc.length<2){toast('账号至少需要 2 位','⚠️');return}
+  if(pwd.length<6){toast('密码至少 6 位','⚠️');return}
+  if(pwd!==pwd2){toast('两次输入的密码不一致','⚠️');return}
+  const realRole=roleOfAccount(acc);   // 首字母为唯一依据：小写 s 同样归食堂
+  if(DB.users.some(u=>u.account.toLowerCase()===acc.toLowerCase())){toast('该账号已被注册','❗');return}
+  DB.users.push({account:acc,pwd,role:realRole,nickname:acc});
+  save();
+  ['regAccount','regPwd','regPwd2'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('loginAccount').value=acc;
+  document.getElementById('loginPwd').value='';
+  switchAuth('login');
+  toast(`注册成功，已分配为${roleName(realRole)}端，请登录`,'🎉');
+}
+function doLogin(){
+  const acc=document.getElementById('loginAccount').value.trim();
+  const pwd=document.getElementById('loginPwd').value;
+  if(!acc||!pwd){toast('请输入账号和密码','⚠️');return}
+  const u=DB.users.find(x=>x.account.toLowerCase()===acc.toLowerCase()&&x.pwd===pwd);
+  if(!u){toast('账号或密码错误','❗');return}
+  const autoRole=roleOfAccount(u.account);   // 以首字母为唯一身份依据
+  if(autoRole!==u.role){u.role=autoRole;save()}
+  curUser=u;
+  const display=u.nickname||u.account;
+  localStorage.setItem('sgli_user',u.account);
+  localStorage.setItem('sgli_name',display);
+  document.getElementById('stuNameShow').textContent=display;
+  document.getElementById('canNameShow').textContent=display;
+  enterApp(autoRole);
+  toast(`欢迎回来，${display}（${roleName(autoRole)}端）`,'👋');
+}
+function quickEnter(){
+  if(!curUser){toast('请先登录','⚠️');return}
+  enterApp(roleOfAccount(curUser.account));
+}
+function refreshQuickEntry(){
+  const box=document.getElementById('quickEntry');
+  if(curUser){
+    box.style.display='flex';
+    document.getElementById('quickUser').textContent=(curUser.nickname||curUser.account)+' · '+roleName(roleOfAccount(curUser.account));
+  }else{box.style.display='none'}
+}
+function logout(){
+  curUser=null;
+  localStorage.removeItem('sgli_user');
+  goHome();
+  switchAuth('login');
+  document.getElementById('loginPwd').value='';
+  refreshQuickEntry();
+  toast('已退出登录','👋');
+}
+
+/* ==================== 学生端：点餐 ==================== */
+let curWin='all';
+const winById=id=>DB.windows.find(w=>w.id===id);
+function renderStudent(){renderWinStrip();renderDishes();renderCart();updateBadges()}
+
+function renderWinStrip(){
+  const strip=document.getElementById('winStrip');
+  strip.innerHTML=`<div class="win-chip ${curWin==='all'?'on':''}" onclick="pickWin('all')"><span class="we">🍽️</span><span class="wn">全部</span><span class="wc">${DB.dishes.length} 道菜</span></div>`+
+    DB.windows.map(w=>`<div class="win-chip ${curWin===w.id?'on':''}" onclick="pickWin('${w.id}')"><span class="we">${w.emoji}</span><span class="wn">${esc(w.name)}</span><span class="wc">${DB.dishes.filter(d=>d.win===w.id).length} 道</span></div>`).join('');
+}
+function pickWin(id){curWin=id;renderWinStrip();renderDishes()}
+function renderDishes(){
+  const list=curWin==='all'?DB.dishes:DB.dishes.filter(d=>d.win===curWin);
+  document.getElementById('curWinName').textContent=curWin==='all'?'🍜 全部美味':winById(curWin).emoji+' '+winById(curWin).name;
+  document.getElementById('dishCount').textContent=`共 ${list.length} 道菜`;
+  const grid=document.getElementById('dishGrid');
+  if(!list.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1"><span class="ico">🍳</span>该窗口暂无菜品</div>';return}
+  grid.innerHTML=list.map(d=>{
+    const w=winById(d.win);
+    return `<div class="dish-card">
+      <div class="dish-pic" style="background:${w.color}"><span>${d.emoji}</span><span class="stock">剩 ${d.stock} 份</span></div>
+      <div class="dish-info"><h4>${esc(d.name)}</h4><div class="desc">${esc(d.desc)}</div>
+        <div class="dish-bottom"><span class="price"><small>¥</small>${d.price}</span>
+        <button class="add-btn" ${d.stock<=0?'disabled':''} onclick="addCart('${d.id}')">＋</button></div>
+      </div></div>`;
+  }).join('');
+}
+function addCart(id){
+  const d=DB.dishes.find(x=>x.id===id);
+  const c=DB.cart[id]||0;
+  if(c>=d.stock){toast('库存不足啦','📦');return}
+  DB.cart[id]=c+1;save();renderCart();toast(`已加入 ${d.name}`,d.emoji);
+}
+function renderCart(){
+  const ids=Object.keys(DB.cart).filter(id=>DB.cart[id]>0);
+  const box=document.getElementById('cartItems');
+  let total=0,count=0;
+  if(!ids.length){box.innerHTML='<div class="cart-empty"><span class="ico">🍽️</span>餐盘空空的，去挑选美味吧</div>'}
+  else{
+    box.innerHTML=ids.map(id=>{
+      const d=DB.dishes.find(x=>x.id===id);if(!d)return '';
+      total+=d.price*DB.cart[id];count+=DB.cart[id];
+      return `<div class="cart-item"><div class="ci-emoji">${d.emoji}</div>
+        <div class="ci-main"><div class="ci-name">${esc(d.name)}</div><div class="ci-price">¥${d.price} × ${DB.cart[id]}</div></div>
+        <div class="qty-ctrl"><button onclick="chgCart('${id}',-1)">−</button><span>${DB.cart[id]}</span><button onclick="chgCart('${id}',1)">＋</button></div></div>`;
+    }).join('');
+  }
+  document.getElementById('cartCount').textContent=count+' 件';
+  document.getElementById('cartTotal').textContent='¥'+total;
+}
+function chgCart(id,delta){
+  const d=DB.dishes.find(x=>x.id===id);
+  const nv=(DB.cart[id]||0)+delta;
+  if(nv<=0)delete DB.cart[id];
+  else if(nv>d.stock){toast('库存不足啦','📦');return}
+  else DB.cart[id]=nv;
+  save();renderCart();
+}
+function submitOrder(){
+  const ids=Object.keys(DB.cart).filter(id=>DB.cart[id]>0);
+  if(!ids.length){toast('请先挑选菜品哦','🛒');return}
+  const name=document.getElementById('orderName').value.trim()||'匿名同学';
+  localStorage.setItem('sgli_name',name);
+  const items=ids.map(id=>{const d=DB.dishes.find(x=>x.id===id);return{dishId:id,name:d.name,emoji:d.emoji,price:d.price,qty:DB.cart[id]}});
+  const total=items.reduce((s,i)=>s+i.price*i.qty,0);
+  DB.orders.unshift({
+    id:'SG'+Date.now().toString().slice(-8), student:name, account:curUser?curUser.account:'', items, total,
+    addr:document.getElementById('orderAddr').value,
+    time:document.getElementById('orderTime').value,
+    note:document.getElementById('orderNote').value.trim(),
+    status:'pending', created:nowStr()
+  });
+  ids.forEach(id=>{DB.dishes.find(x=>x.id===id).stock-=DB.cart[id]});
+  DB.cart={};save();renderCart();renderDishes();updateBadges();
+  document.getElementById('orderNote').value='';
+  toast('下单成功！等待食堂接单','🎉');
+  switchTab('student','stu-myorder');
+}
+
+/* ==================== 学生端：我的订单 ==================== */
+const statusMap={pending:['⏳ 待接单','st-pending'],preparing:['👨‍🍳 制作中','st-preparing'],delivering:['🛵 配送中','st-delivering'],completed:['✅ 已完成','st-completed'],cancelled:['✖️ 已取消','st-cancelled']};
+let myFilter='all';
+function updateBadges(){
+  const acc=curUser?curUser.account:'';
+  const name=localStorage.getItem('sgli_name')||'匿名同学';
+  const mine=DB.orders.filter(o=>(o.account?o.account===acc:o.student===name)&&o.status!=='completed'&&o.status!=='cancelled').length;
+  document.getElementById('myOrderBadge').textContent=mine;
+  const pending=DB.orders.filter(o=>o.status==='pending').length;
+  document.getElementById('canOrderBadge').textContent=pending;
+}
+function renderMyOrders(){
+  updateBadges();
+  const acc=curUser?curUser.account:'';
+  const name=localStorage.getItem('sgli_name')||'匿名同学';
+  const filters=[['all','全部'],['pending','待接单'],['preparing','制作中'],['delivering','配送中'],['completed','已完成']];
+  document.getElementById('myOrderFilter').innerHTML=filters.map(([v,l])=>`<button class="filter-chip ${myFilter===v?'on':''}" onclick="myFilter='${v}';renderMyOrders()">${l}</button>`).join('');
+  let list=DB.orders.filter(o=>o.account?o.account===acc:o.student===name);
+  if(myFilter!=='all')list=list.filter(o=>o.status===myFilter);
+  const box=document.getElementById('myOrderList');
+  if(!list.length){box.innerHTML='<div class="card empty"><span class="ico">📋</span>还没有相关订单，去点餐吧</div>';return}
+  box.innerHTML=list.map(o=>{
+    const [st,sc]=statusMap[o.status];
+    return `<div class="card order-card">
+      <div class="order-top"><div class="order-id">订单号 <b>${o.id}</b> · ${o.created}</div><span class="status ${sc}">${st}</span></div>
+      <div class="order-items">${o.items.map(i=>`<span class="oi">${i.emoji} ${esc(i.name)} ×<b>${i.qty}</b></span>`).join('')}</div>
+      <div class="order-meta">
+        <span>👤 <b>${esc(o.student)}</b></span>
+        <span>📍 <b>${esc(o.addr)}</b></span>
+        <span>⏰ <b>${esc(o.time)}</b></span>
+        <span>💰 <b>¥${o.total}</b></span>
+        ${o.note?`<span>📝 ${esc(o.note)}</span>`:''}
+      </div>
+      ${o.status==='pending'?`<div class="order-actions"><button class="btn btn-danger btn-sm" onclick="cancelOrder('${o.id}')">取消订单</button></div>`:''}
+    </div>`;
+  }).join('');
+}
+function cancelOrder(id){
+  openModal('取消订单','<p style="color:var(--sub)">确定要取消这笔订单吗？取消后无法恢复。</p>',
+    `<button class="btn btn-line" onclick="closeModal()">再想想</button><button class="btn btn-danger" onclick="doCancel('${id}')">确认取消</button>`);
+}
+function doCancel(id){
+  const o=DB.orders.find(x=>x.id===id);
+  o.items.forEach(i=>{const d=DB.dishes.find(x=>x.id===i.dishId);if(d)d.stock+=i.qty});
+  o.status='cancelled';save();closeModal();renderMyOrders();renderDishes();updateBadges();toast('订单已取消','✖️');
+}
+
+/* ==================== 学生端：窗口留言 ==================== */
+let curMsgWin='w1';
+function renderStuMsg(){
+  document.getElementById('msgWinList').innerHTML=DB.windows.map(w=>
+    `<div class="side-win-item ${curMsgWin===w.id?'on':''}" onclick="curMsgWin='${w.id}';renderStuMsg()"><span class="sw-emoji">${w.emoji}</span>${esc(w.name)}</div>`).join('');
+  const w=winById(curMsgWin);
+  document.getElementById('msgWinTitle').textContent=w.emoji+' '+w.name+' · 留言板';
+  const list=DB.messages.filter(m=>m.win===curMsgWin);
+  document.getElementById('msgCount').textContent=list.length+' 条留言';
+  const box=document.getElementById('msgList');
+  if(!list.length){box.innerHTML='<div class="empty"><span class="ico">💬</span>还没有留言，来说第一句吧</div>';return}
+  box.innerHTML=list.map(m=>`<div class="msg-item">
+    <div class="msg-avatar">${esc(m.author[0])}</div>
+    <div class="msg-content"><div class="mh"><b>${esc(m.author)}</b><time>${esc(m.time)}</time></div>
+      <div class="mt">${esc(m.content)}</div>
+      ${m.reply?`<div class="msg-reply"><b>🏪 食堂回复：</b>${esc(m.reply)}</div>`:''}
+    </div></div>`).join('');
+}
+function postMsg(){
+  const inp=document.getElementById('msgInput');const txt=inp.value.trim();
+  if(!txt){toast('写点内容再发送吧','✏️');return}
+  const name=localStorage.getItem('sgli_name')||'匿名同学';
+  DB.messages.unshift({id:'m'+uid(),win:curMsgWin,author:name,content:txt,time:nowStr(),reply:''});
+  inp.value='';save();renderStuMsg();toast('留言已发送','💬');
+}
+
+/* ==================== 学生端：交流墙 ==================== */
+const TAGS=['🍽️ 美食推荐','💬 食堂吐槽','🤝 找饭搭子','❓ 求助问答','🎉 校园日常'];
+let curTag='all';
+function renderWall(){
+  document.getElementById('tagPicker').innerHTML=TAGS.map(t=>`<span class="tag-opt ${curTag===t?'on':''}" onclick="curTag=curTag==='${t}'?'all':'${t}';renderWall()">${t}</span>`).join('');
+  document.getElementById('wallFilter').innerHTML=[['all','🔥 全部'],...TAGS.map(t=>[t,t])].map(([v,l])=>`<button class="filter-chip ${curTag===v?'on':''}" onclick="curTag='${v}';renderWall()">${l}</button>`).join('');
+  let list=curTag==='all'?DB.posts:DB.posts.filter(p=>p.tag===curTag);
+  const box=document.getElementById('wallList');
+  if(!list.length){box.innerHTML='<div class="card empty"><span class="ico">📌</span>这个话题还没有帖子，来发第一帖吧</div>';return}
+  box.innerHTML=list.map(p=>{
+    const liked=p._liked?'liked':'';
+    return `<div class="card post-card">
+      <div class="post-head"><div class="post-avatar">${esc(p.author[0])}</div>
+        <div class="ph-main"><b>${esc(p.author)}</b><time>${esc(p.time)}</time></div>
+        <span class="tag" style="background:var(--soft);color:var(--orange-d)">${esc(p.tag)}</span></div>
+      <div class="post-title">${esc(p.title)}</div>
+      <div class="post-text">${esc(p.content)}</div>
+      <div class="post-foot">
+        <button class="act ${liked}" onclick="likePost('${p.id}')">${p._liked?'❤️':'🤍'} ${p.likes}</button>
+        <button class="act" onclick="toggleComments('${p.id}')">💬 ${p.comments.length}</button>
+      </div>
+      <div class="comments" id="cmt-${p.id}">
+        ${p.comments.map(c=>`<div class="comment"><div class="cav">${esc(c.author[0])}</div><div class="cb"><b>${esc(c.author)}</b>${esc(c.content)}<time>${esc(c.time)}</time></div></div>`).join('')}
+        <div class="comment-input"><input id="ci-${p.id}" placeholder="说点什么..." maxlength="100" onkeydown="if(event.key==='Enter')addComment('${p.id}')"><button class="btn btn-ghost btn-sm" onclick="addComment('${p.id}')">回复</button></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function postThread(){
+  const t=document.getElementById('postTitle').value.trim(),c=document.getElementById('postContent').value.trim();
+  if(!t||!c){toast('标题和内容都要填哦','✏️');return}
+  const name=localStorage.getItem('sgli_name')||'匿名同学';
+  DB.posts.unshift({id:'p'+uid(),author:name,title:t,content:c,tag:curTag==='all'?TAGS[0]:curTag,time:nowStr(),likes:0,comments:[],_liked:false});
+  document.getElementById('postTitle').value='';document.getElementById('postContent').value='';
+  save();renderWall();toast('帖子发布成功','📌');
+}
+function likePost(id){const p=DB.posts.find(x=>x.id===id);p._liked=!p._liked;p.likes+=p._liked?1:-1;save();renderWall()}
+function toggleComments(id){document.getElementById('cmt-'+id).classList.toggle('show')}
+function addComment(id){
+  const inp=document.getElementById('ci-'+id),txt=inp.value.trim();
+  if(!txt)return;
+  const p=DB.posts.find(x=>x.id===id);
+  p.comments.push({author:localStorage.getItem('sgli_name')||'匿名同学',content:txt,time:nowStr()});
+  save();renderWall();toast('回复成功','💬');
+  setTimeout(()=>{const el=document.getElementById('cmt-'+id);if(el)el.classList.add('show')},10);
+}
+
+/* ==================== 食堂端：订单管理 ==================== */
+function renderCanteen(){updateBadges();renderStats();renderCanOrders()}
+function renderStats(){
+  const counts={pending:0,preparing:0,delivering:0,completed:0};
+  DB.orders.forEach(o=>{if(counts[o.status]!==undefined)counts[o.status]++});
+  const revenue=DB.orders.filter(o=>o.status!=='cancelled').reduce((s,o)=>s+o.total,0);
+  const data=[
+    [counts.pending,'⏳ 待接单','#FFF2D9','#B7791F'],
+    [counts.preparing+counts.delivering,'👨‍🍳 进行中','#E8F0FF','#2B6CB0'],
+    [counts.completed,'✅ 已完成','#E6F6EC','#2E9E5B'],
+    ['¥'+revenue,'💰 营业额','#FFE0D6','#E8551F'],
+  ];
+  document.getElementById('statRow').innerHTML=data.map(([v,l,bg,c])=>`<div class="card stat"><div class="si" style="background:${bg}">${l.split(' ')[0]}</div><div><div class="sv" style="color:${c}">${v}</div><div class="sl">${l.split(' ')[1]}</div></div></div>`).join('');
+}
+let canFilter='all';
+function renderCanOrders(){
+  const filters=[['all','全部'],['pending','待接单'],['preparing','制作中'],['delivering','配送中'],['completed','已完成'],['cancelled','已取消']];
+  document.getElementById('canOrderFilter').innerHTML=filters.map(([v,l])=>`<button class="filter-chip ${canFilter===v?'on':''}" onclick="canFilter='${v}';renderCanOrders()">${l}</button>`).join('');
+  let list=canFilter==='all'?DB.orders:DB.orders.filter(o=>o.status===canFilter);
+  const box=document.getElementById('canOrderList');
+  if(!list.length){box.innerHTML='<div class="card empty"><span class="ico">📦</span>暂无相关订单</div>';return}
+  box.innerHTML=list.map(o=>{
+    const [st,sc]=statusMap[o.status];
+    let acts='';
+    if(o.status==='pending')acts=`<button class="btn btn-ok btn-sm" onclick="setOrderStatus('${o.id}','preparing')">✔ 接单</button><button class="btn btn-danger btn-sm" onclick="setOrderStatus('${o.id}','cancelled')">拒绝</button>`;
+    else if(o.status==='preparing')acts=`<button class="btn btn-primary btn-sm" onclick="setOrderStatus('${o.id}','delivering')">🛵 出餐配送</button>`;
+    else if(o.status==='delivering')acts=`<button class="btn btn-ok btn-sm" onclick="setOrderStatus('${o.id}','completed')">✅ 确认送达</button>`;
+    return `<div class="card order-card">
+      <div class="order-top"><div class="order-id">订单号 <b>${o.id}</b> · ${o.created}</div><span class="status ${sc}">${st}</span></div>
+      <div class="order-items">${o.items.map(i=>`<span class="oi">${i.emoji} ${esc(i.name)} ×<b>${i.qty}</b></span>`).join('')}</div>
+      <div class="order-meta">
+        <span>👤 <b>${esc(o.student)}</b></span>
+        <span>📍 <b>${esc(o.addr)}</b></span>
+        <span>⏰ <b>${esc(o.time)}</b></span>
+        <span>💰 <b>¥${o.total}</b></span>
+        ${o.note?`<span>📝 ${esc(o.note)}</span>`:''}
+      </div>
+      ${acts?`<div class="order-actions">${acts}</div>`:''}
+    </div>`;
+  }).join('');
+}
+function setOrderStatus(id,st){
+  const o=DB.orders.find(x=>x.id===id);o.status=st;
+  if(st==='cancelled')o.items.forEach(i=>{const d=DB.dishes.find(x=>x.id===i.dishId);if(d)d.stock+=i.qty});
+  save();renderCanteen();renderDishes();updateBadges();
+  toast('订单状态已更新',st==='cancelled'?'✖️':'✅');
+}
+
+/* ==================== 食堂端：留言管理 ==================== */
+let canMsgWin='w1';
+function renderCanMsgs(){
+  document.getElementById('canMsgWinList').innerHTML=DB.windows.map(w=>{
+    const n=DB.messages.filter(m=>m.win===w.id&&!m.reply).length;
+    return `<div class="side-win-item ${canMsgWin===w.id?'on':''}" onclick="canMsgWin='${w.id}';renderCanMsgs()"><span class="sw-emoji">${w.emoji}</span>${esc(w.name)}${n?` <span class="tag" style="background:var(--orange);color:#fff;margin-left:auto">${n}</span>`:''}</div>`;
+  }).join('');
+  const w=winById(canMsgWin);
+  document.getElementById('canMsgTitle').textContent=w.emoji+' '+w.name+' · 留言';
+  const list=DB.messages.filter(m=>m.win===canMsgWin);
+  document.getElementById('canMsgCount').textContent=list.length+' 条留言';
+  const box=document.getElementById('canMsgList');
+  if(!list.length){box.innerHTML='<div class="empty"><span class="ico">💬</span>该窗口暂无留言</div>';return}
+  box.innerHTML=list.map(m=>`<div class="msg-item">
+    <div class="msg-avatar">${esc(m.author[0])}</div>
+    <div class="msg-content"><div class="mh"><b>${esc(m.author)}</b><time>${esc(m.time)}</time></div>
+      <div class="mt">${esc(m.content)}</div>
+      ${m.reply?`<div class="msg-reply"><b>🏪 我的回复：</b>${esc(m.reply)}</div>
+        <button class="btn btn-line btn-sm" style="margin-top:8px" onclick="replyMsg('${m.id}')">修改回复</button>`:
+        `<button class="btn btn-ghost btn-sm" style="margin-top:10px" onclick="replyMsg('${m.id}')">↩ 回复留言</button>`}
+    </div></div>`).join('');
+}
+function replyMsg(id){
+  const m=DB.messages.find(x=>x.id===id);
+  openModal('回复留言',
+    `<div class="muted" style="margin-bottom:10px">来自 <b style="color:var(--ink)">${esc(m.author)}</b>：${esc(m.content)}</div>
+     <div class="field"><label>你的回复</label><textarea id="replyInput" placeholder="友好地回应同学吧～" maxlength="200">${esc(m.reply||'')}</textarea></div>`,
+    `<button class="btn btn-line" onclick="closeModal()">取消</button><button class="btn btn-primary" onclick="doReply('${id}')">发送回复</button>`);
+}
+function doReply(id){
+  const txt=document.getElementById('replyInput').value.trim();
+  if(!txt){toast('回复内容不能为空','✏️');return}
+  DB.messages.find(x=>x.id===id).reply=txt;
+  save();closeModal();renderCanMsgs();toast('回复已发送','💬');
+}
+
+/* ==================== 食堂端：菜品管理 ==================== */
+let dishWin='w1';
+function renderDishManage(){
+  document.getElementById('dishManageStrip').innerHTML=DB.windows.map(w=>
+    `<div class="win-chip ${dishWin===w.id?'on':''}" onclick="dishWin='${w.id}';renderDishManage()"><span class="we">${w.emoji}</span><span class="wn">${esc(w.name)}</span><span class="wc">${DB.dishes.filter(d=>d.win===w.id).length} 道</span></div>`).join('');
+  const w=winById(dishWin);
+  document.getElementById('dishManageTitle').textContent=w.emoji+' '+w.name+' · 菜品管理';
+  const list=DB.dishes.filter(d=>d.win===dishWin);
+  const box=document.getElementById('dishManageGrid');
+  if(!list.length){box.innerHTML='<div class="card empty" style="grid-column:1/-1"><span class="ico">🍳</span>暂无菜品，点击右上角新增</div>';return}
+  box.innerHTML=list.map(d=>`<div class="card dm-card">
+    <div class="dm-pic" style="background:${w.color}">${d.emoji}</div>
+    <div class="dm-main"><h4>${esc(d.name)}</h4><div class="dm-price">¥${d.price}</div><div class="dm-stock">库存 ${d.stock} 份</div></div>
+    <div class="dm-actions"><button class="btn btn-ghost btn-sm" onclick="openDishModal('${d.id}')">✏️ 编辑</button><button class="btn btn-danger btn-sm" onclick="delDish('${d.id}')">🗑 删除</button></div>
+  </div>`).join('');
+}
+const EMOJIS=['🍛','🍜','🍗','🍱','🥟','🥗','🍔','🍕','🍚','🧋','🥤','🍰','🥭','🌶️','🍖','🐔','🥑','🍝'];
+function openDishModal(id){
+  const d=id?DB.dishes.find(x=>x.id===id):null;
+  const emoji=d?d.emoji:'🍛';
+  openModal(d?'编辑菜品':'新增菜品',
+    `<div class="field"><label>菜品图标</label><div class="tag-picker" id="emojiPicker">${EMOJIS.map(e=>`<span class="tag-opt ${e===emoji?'on':''}" style="font-size:19px;padding:6px 10px" onclick="pickEmoji(this,'${e}')">${e}</span>`).join('')}</div><input type="hidden" id="dishEmoji" value="${emoji}"></div>
+     <div class="field"><label>菜品名称</label><input id="dishName" value="${d?esc(d.name):''}" placeholder="如：香辣鸡腿饭" maxlength="20"></div>
+     <div class="field"><label>价格（元）</label><input id="dishPrice" type="number" min="1" max="999" value="${d?d.price:15}"></div>
+     <div class="field"><label>库存份数</label><input id="dishStock" type="number" min="0" max="9999" value="${d?d.stock:99}"></div>
+     <div class="field"><label>菜品描述</label><textarea id="dishDesc" placeholder="简单描述一下口味" maxlength="50">${d?esc(d.desc):''}</textarea></div>`,
+    `<button class="btn btn-line" onclick="closeModal()">取消</button><button class="btn btn-primary" onclick="saveDish('${id||''}')">保存</button>`);
+}
+function pickEmoji(el,e){
+  document.querySelectorAll('#emojiPicker .tag-opt').forEach(x=>x.classList.remove('on'));
+  el.classList.add('on');document.getElementById('dishEmoji').value=e;
+}
+function saveDish(id){
+  const name=document.getElementById('dishName').value.trim();
+  const price=parseFloat(document.getElementById('dishPrice').value);
+  const stock=parseInt(document.getElementById('dishStock').value);
+  if(!name||!price||price<=0||isNaN(stock)||stock<0){toast('请填写完整且正确的信息','⚠️');return}
+  const data={name,price,stock,emoji:document.getElementById('dishEmoji').value,desc:document.getElementById('dishDesc').value.trim()||'美味可口，欢迎品尝'};
+  if(id){Object.assign(DB.dishes.find(x=>x.id===id),data)}
+  else{DB.dishes.unshift({id:'d'+uid(),win:dishWin,...data})}
+  save();closeModal();renderDishManage();renderDishes();renderWinStrip();toast(id?'菜品已更新':'菜品已添加','🍳');
+}
+function delDish(id){
+  openModal('删除菜品','<p style="color:var(--sub)">确定删除这道菜吗？此操作不可恢复。</p>',
+    `<button class="btn btn-line" onclick="closeModal()">取消</button><button class="btn btn-danger" onclick="doDelDish('${id}')">确认删除</button>`);
+}
+function doDelDish(id){
+  DB.dishes=DB.dishes.filter(x=>x.id!==id);delete DB.cart[id];
+  save();closeModal();renderDishManage();renderDishes();renderCart();renderWinStrip();toast('菜品已删除','🗑');
+}
+
+/* ==================== 启动 ==================== */
+load();
+// 恢复登录态：用账号首字母再次校验身份，防止数据被手动篡改
+(function(){
+  const acc=localStorage.getItem('sgli_user');
+  if(!acc)return;
+  const u=DB.users.find(x=>x.account===acc);
+  if(!u)return;
+  if(roleOfAccount(u.account)!==u.role){u.role=roleOfAccount(u.account);save()}
+  curUser=u;
+  const display=u.nickname||u.account;
+  document.getElementById('stuNameShow').textContent=display;
+  document.getElementById('canNameShow').textContent=display;
+  enterApp(u.role);
+})();
+switchAuth('login');
+updateRegHint();
+refreshQuickEntry();
+renderStuMsg();   // 预渲染留言内容
+renderCanMsgs();  // 预渲染食堂留言
+renderWall();     // 预渲染交流墙
+updateBadges();
+</script>
+</body>
+</html>
